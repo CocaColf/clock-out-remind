@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>打卡助手</title>
+  <script src="./axios.js"></script>
+  <script src="./notify.js"></script>
+  <link rel="stylesheet" href="./notify.css">
+  <style>
+    .container {
+      margin: 0 auto;
+      border: 1px solid#ccc;
+      padding: 12px 24px;
+    }
+
+    .separator-line {
+      margin: 24px 0;
+      border: 1px dashed rgb(110, 108, 108);
+    }
+
+    .btn {
+      width: 200px;
+      height: 32px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      text-align: center;
+      line-height: 32px;
+    }
+
+    .btn:hover {
+      color: #999;
+    }
+
+    .delay-container .input-container {
+      margin: 48px 0;
+    }
+
+    .delay-container input {
+      height: 32px;
+    }
+
+    .delay-container button {
+      height: 32px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="confirm-container">
+      <p class="title">我已经打卡了</p>
+      <div id="confirmBtn" class="btn">
+        <span>确认点这里</span>
+      </div>
+    </div>
+
+    <div class="separator-line"></div>
+
+    <div class="delay-container">
+      <p class="title">我要推迟到</p>
+      <div class="input-container">
+        <label for="hour">时：</label>
+        <input type="number" id="hour">
+      </div>
+
+      <div class="input-container">
+        <label for="minute">分：</label>
+        <input type="number" id="minute">
+      </div>
+
+
+      <div id="delayBtn" class="btn">推迟提醒</div>
+    </div>
+  </div>
+</body>
+<script>
+  vNotify.options = {
+    position: 'center'
+  };
+
+  document.getElementById('confirmBtn').addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+      await axios({
+        url: '/confirm',
+        method: 'GET'
+      });
+      vNotify.success({ text: '确认成功' });
+    } catch (error) {
+      vNotify.error({ text: '确认失败' });
+    }
+  });
+
+  document.getElementById('delayBtn').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const data = {
+      hour: document.getElementById('hour').value,
+      minute: document.getElementById('minute').value
+    };
+
+    try {
+      await axios({
+        url: '/setTask',
+        method: 'POST',
+        data
+      });
+      vNotify.success({ text: '推迟成功' });
+    } catch (error) {
+      vNotify.success({ text: '推迟失败' });
+    }
+  });
+</script>
+
+</html>
